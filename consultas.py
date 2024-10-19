@@ -13,14 +13,13 @@ class ConsultasPokemon:
         for registro in resultado:
             print(f"{registro['nome']} - Peso: {registro['peso_kg']} kg")
 
-
-
     @staticmethod
     def _consulta_pikachu_fraqueza(tx):
         consulta = """
         MATCH (pikachu:Pokemon {nome: 'Pikachu'})-[:TEM_TIPO]->(tipo_pikachu)
-        <-[:FRACO_CONTRA]-(tipo_forte)<-[:TEM_TIPO]-(pokemon)
-        WHERE pokemon.peso_kg > 10
+        WITH COLLECT(DISTINCT tipo_pikachu.nome) AS tipos_pikachu
+        MATCH (pokemon:Pokemon)-[:TEM_TIPO]->(tipo_pokemon)
+        WHERE tipo_pokemon.nome IN ['Ground'] AND pokemon.peso_kg > 10
         RETURN DISTINCT pokemon.nome AS nome, pokemon.peso_kg AS peso_kg
         """
         resultado = tx.run(consulta)
@@ -52,7 +51,6 @@ class ConsultasPokemon:
         """
         resultado = tx.run(consulta)
         return resultado.single()['total']
-
 
 if __name__ == "__main__":
     uri = "neo4j+s://098f3058.databases.neo4j.io"

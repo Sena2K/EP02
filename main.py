@@ -29,9 +29,6 @@ class GrafoPokemon:
                 print(f"Inserindo Pokémon {idx}/{len(dados)}: {pokemon['nome']}")
                 session.execute_write(self._criar_pokemon, pokemon)
             print("Todos os Pokémons foram inseridos.")
-            print("Criando relacionamentos de fraqueza entre tipos")
-            session.execute_write(self._criar_fraquezas_tipo)
-            print("Relacionamentos de fraqueza criados.")
 
     @staticmethod
     def _limpar_base(tx):
@@ -79,74 +76,6 @@ class GrafoPokemon:
             MERGE (p2:Pokemon {numero: $numero2})
             MERGE (p1)-[:EVOLUI_PARA]->(p2)
             """, numero1=pokemon['numero'], numero2=evolucao['numero'])
-
-
-    @staticmethod
-    def _criar_fraquezas_tipo(tx):
-        fraquezas = [
-            ('Normal', 'Fighting'),
-            ('Normal', 'Ghost'),
-            ('Normal', 'Dark'),
-            ('Fire', 'Water'),
-            ('Fire', 'Ground'),
-            ('Fire', 'Rock'),
-            ('Water', 'Electric'),
-            ('Water', 'Grass'),
-            ('Electric', 'Ground'),
-            ('Grass', 'Fire'),
-            ('Grass', 'Ice'),
-            ('Grass', 'Poison'),
-            ('Grass', 'Flying'),
-            ('Grass', 'Bug'),
-            ('Ice', 'Fire'),
-            ('Ice', 'Fighting'),
-            ('Ice', 'Rock'),
-            ('Ice', 'Steel'),
-            ('Fighting', 'Psychic'),
-            ('Fighting', 'Flying'),
-            ('Fighting', 'Fairy'),
-            ('Poison', 'Psychic'),
-            ('Poison', 'Ground'),
-            ('Ground', 'Water'),
-            ('Ground', 'Grass'),
-            ('Ground', 'Ice'),
-            ('Flying', 'Electric'),
-            ('Flying', 'Ice'),
-            ('Flying', 'Rock'),
-            ('Psychic', 'Bug'),
-            ('Psychic', 'Ghost'),
-            ('Psychic', 'Dark'),
-            ('Bug', 'Fire'),
-            ('Bug', 'Flying'),
-            ('Bug', 'Rock'),
-            ('Rock', 'Water'),
-            ('Rock', 'Grass'),
-            ('Rock', 'Fighting'),
-            ('Rock', 'Ground'),
-            ('Rock', 'Steel'),
-            ('Ghost', 'Ghost'),
-            ('Ghost', 'Dark'),
-            ('Dragon', 'Ice'),
-            ('Dragon', 'Dragon'),
-            ('Dragon', 'Fairy'),
-            ('Dark', 'Fighting'),
-            ('Dark', 'Bug'),
-            ('Dark', 'Fairy'),
-            ('Steel', 'Fire'),
-            ('Steel', 'Fighting'),
-            ('Steel', 'Ground'),
-            ('Fairy', 'Poison'),
-            ('Fairy', 'Steel'),
-            ('Fairy', 'Fire'),
-            ('Fairy', 'Dark'),
-            ('Fairy', 'Fighting')
-        ]
-        for tipo1, tipo2 in fraquezas:
-            tx.run("""
-            MATCH (t1:Tipo {nome: $tipo1}), (t2:Tipo {nome: $tipo2})
-            MERGE (t1)-[:FRACO_CONTRA]->(t2)
-            """, tipo1=tipo1, tipo2=tipo2)
-
 
 
 if __name__ == "__main__":
